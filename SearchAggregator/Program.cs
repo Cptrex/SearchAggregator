@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using SearchAggregator;
+using SearchAggregator.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,8 +11,13 @@ builder.Services.AddControllers();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "frontend/dist";
+    configuration.RootPath = "Frontend/dist";
 });
+
+string RPServerConnection = builder.Configuration.GetConnectionString("DbConnection");
+builder.Services.AddDbContext<SearchContext>(options => options.UseSqlServer(RPServerConnection));
+
+builder.Services.AddScoped<ISearchContextRepository, SearchContextRepository>();
 
 var app = builder.Build();
 
