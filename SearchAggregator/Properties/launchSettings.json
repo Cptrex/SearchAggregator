@@ -17,7 +17,7 @@
       "applicationUrl": "http://localhost:5133",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "GOOGLE_API_KEY": "",
+        "GOOGLE_API_KEY": "AIzaSyCSXH-f4T_d9RV98Nz8vkXF2vlT3jO2gik",
         "GOOGLE_API_SEARCH_URL": "https://www.googleapis.com/customsearch/v1",
         "GOOGLE_API_SEARCH_ENGINE_ID": "e6c1b0c6f5d5142fd",
         "YANDEX_API_KEY": "",

@@ -11,9 +11,9 @@ public class SearchContext : DbContext
         Database.EnsureCreated();   // создаем базу данных при первом обращении
     }
 
-    [DbFunction(Name = "SoundEx", Schema = "")]
+    [DbFunction("MySoundEx", "")]
     public static string SoundLike(string searchText)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

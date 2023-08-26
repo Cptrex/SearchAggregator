@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using SearchAggregator;
+using SearchAggregator.Interfaces;
 using SearchAggregator.Models;
+using SearchAggregator.Repository;
+using SearchAggregator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +16,11 @@ builder.Services.AddSpaStaticFiles(configuration =>
     configuration.RootPath = "Frontend/dist";
 });
 
-string RPServerConnection = builder.Configuration.GetConnectionString("DbConnection");
-builder.Services.AddDbContext<SearchContext>(options => options.UseSqlServer(RPServerConnection));
-
+string dbConnection = builder.Configuration.GetConnectionString("DbConnection");
+builder.Services.AddDbContext<SearchContext>(options => options.UseSqlServer(dbConnection));
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<ISearchContextRepository, SearchContextRepository>();
+builder.Services.AddScoped<ISearchEngineService, SearchEngineService>();
 
 var app = builder.Build();
 
