@@ -25,7 +25,7 @@ public class SearchAggregatorController : ControllerBase
     {
         var foundSearchResults = await _searchContextRepository.GetAggregatorResultBySearchText(searchText, cancellationToken);
 
-        if (foundSearchResults == null || foundSearchResults.Count == 0) 
+        if (foundSearchResults == null && foundSearchResults.Count == 0) 
         {
             var googleItems = await _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText);
             var bingItems = await _searchEngineService.SearchViaBing(_httpClientFactory, searchText);
