@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using SearchAggregator.Interfaces;
 using SearchAggregator.Models;
 

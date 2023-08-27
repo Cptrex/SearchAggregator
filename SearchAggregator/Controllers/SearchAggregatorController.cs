@@ -25,16 +25,15 @@ public class SearchAggregatorController : ControllerBase
     {
         var foundSearchResults = await _searchContextRepository.GetAggregatorResultBySearchText(searchText, cancellationToken);
 
-        Console.WriteLine($"foundSearchResults.Count: {foundSearchResults.Count}");
         if (foundSearchResults == null || foundSearchResults.Count == 0) 
         {
             var googleItems = await _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText);
-            var yandexItems = await _searchEngineService.SearchViaYandex(_httpClientFactory, searchText);
             var bingItems = await _searchEngineService.SearchViaBing(_httpClientFactory, searchText);
+            var yandexItems = await _searchEngineService.SearchViaYandex(_httpClientFactory, searchText);
 
             var aggregatorResult = new SearchAggregatorResult(searchText, googleItems, yandexItems, bingItems);
 
-            _searchContextRepository.AddSearchAggregatorResult(aggregatorResult);
+            await _searchContextRepository.AddSearchAggregatorResult(aggregatorResult);
 
             /*await Task.WhenAll(
             _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText),

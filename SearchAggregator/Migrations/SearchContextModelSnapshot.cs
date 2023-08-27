@@ -30,24 +30,29 @@ namespace SearchAggregator.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BingResult")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasDefaultValue("[]");
 
                     b.Property<string>("GoogleResult")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasDefaultValue("[]");
 
                     b.Property<string>("SearchText")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("YandexResult")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasDefaultValue("[]");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SearchAggregatorResults");
+                    b.HasIndex("SearchText");
+
+                    b.ToTable("SearchAggregatorResult", (string)null);
                 });
 #pragma warning restore 612, 618
         }
