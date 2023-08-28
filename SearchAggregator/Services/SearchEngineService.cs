@@ -11,6 +11,8 @@ public class SearchEngineService : ISearchEngineService
 {
     public async Task<List<GoogleItemModel>> SearchViaGoogle(IHttpClientFactory httpFactory, string searchText)
     {
+        if (IsSearchTextSizeCorrect(searchText) == false) return new List<GoogleItemModel>();
+
         var httpClient = httpFactory.CreateClient();
 
         string googleAPIKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY");
@@ -33,6 +35,8 @@ public class SearchEngineService : ISearchEngineService
     }
     public async Task<List<BingItemModel>> SearchViaBing(IHttpClientFactory httpFactory, string searchText)
     {
+        if (IsSearchTextSizeCorrect(searchText) == false) return new List<BingItemModel>();
+
         string bingAPIKey = Environment.GetEnvironmentVariable("BING_API_KEY");
         string bingAPIUrl = Environment.GetEnvironmentVariable("BING_SEARCH_V7_ENDPOINT");
 
@@ -40,7 +44,7 @@ public class SearchEngineService : ISearchEngineService
 
         httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", bingAPIKey);
 
-        HttpResponseMessage response = await httpClient.GetAsync($"{bingAPIUrl}?q={Uri.EscapeDataString(searchText)}&=count=10");
+        HttpResponseMessage response = await httpClient.GetAsync($"{bingAPIUrl}?q={Uri.EscapeDataString(searchText)}&=count=11");
 
         if (response.IsSuccessStatusCode)
         {
@@ -53,6 +57,8 @@ public class SearchEngineService : ISearchEngineService
     }
     public async Task<List<YandexItemModel>> SearchViaYandex(IHttpClientFactory httpFactory, string searchText)
     {
+        if (IsSearchTextSizeCorrect(searchText) == false) return new List<YandexItemModel>();
+
         string yandexAPIUser = Environment.GetEnvironmentVariable("YANDEX_API_USER");
         string yandexAPIKey = Environment.GetEnvironmentVariable("YANDEX_API_KEY");
         string yandexAPIUrl = Environment.GetEnvironmentVariable("YANDEX_API_SEARCH_URL");
@@ -93,5 +99,11 @@ public class SearchEngineService : ISearchEngineService
         Console.WriteLine(JsonConvert.SerializeObject(yandexSearchResultList));
 
         return yandexSearchResultList;
+    }
+    public bool IsSearchTextSizeCorrect(string searchText)
+    {
+        const int maxSearchTextSize = 2048;
+
+        return searchText.Length <= maxSearchTextSize ? true : false;
     }
 }

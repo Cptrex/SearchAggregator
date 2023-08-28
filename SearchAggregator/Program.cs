@@ -21,6 +21,7 @@ builder.Services.AddDbContext<SearchContext>(options => options.UseSqlServer(dbC
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ISearchContextRepository, SearchContextRepository>();
 builder.Services.AddScoped<ISearchEngineService, SearchEngineService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 

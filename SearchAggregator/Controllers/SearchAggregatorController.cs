@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using SearchAggregator.DTOs;
 using SearchAggregator.Interfaces;
 using SearchAggregator.Models;
 
@@ -11,12 +13,15 @@ public class SearchAggregatorController : ControllerBase
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ISearchContextRepository _searchContextRepository;
     private readonly ISearchEngineService _searchEngineService;
+    private readonly IMapper _mapper;
 
-    public SearchAggregatorController(ISearchEngineService searchEngineService, IHttpClientFactory httpClientFactory, ISearchContextRepository repository)
+
+    public SearchAggregatorController(IMapper mapper, ISearchEngineService searchEngineService, IHttpClientFactory httpClientFactory, ISearchContextRepository repository)
     {
         _httpClientFactory = httpClientFactory;
         _searchContextRepository = repository;
         _searchEngineService = searchEngineService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -25,7 +30,7 @@ public class SearchAggregatorController : ControllerBase
     {
         var foundSearchResults = await _searchContextRepository.GetAggregatorResultBySearchText(searchText, cancellationToken);
 
-        if (foundSearchResults == null && foundSearchResults.Count == 0) 
+        if (foundSearchResults == null) 
         {
             var googleItems = await _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText);
             var bingItems = await _searchEngineService.SearchViaBing(_httpClientFactory, searchText);
@@ -35,13 +40,16 @@ public class SearchAggregatorController : ControllerBase
 
             await _searchContextRepository.AddSearchAggregatorResult(aggregatorResult);
 
-            /*await Task.WhenAll(
-            _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText),
-            _searchEngineService.SearchViaYandex(_httpClientFactory, searchText),
-            _searchEngineService.SearchViaBing(_httpClientFactory, searchText)
-            );*/
+            foundSearchResults = aggregatorResult;
         }
 
-        return Ok();
+        var webSearchDto = new WebSearchDto
+        {
+            GoogleResults = _mapper.Map<List<GoogleDto>>(foundSearchResults.GoogleResult),
+            BingResults = _mapper.Map<List<BingDto>>(foundSearchResults.BingResult),
+            YandexResults = _mapper.Map<List<YandexDto>>(foundSearchResults.YandexResult),
+        };
+
+        return Ok(webSearchDto);
     }
 }
