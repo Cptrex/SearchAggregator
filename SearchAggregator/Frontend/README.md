@@ -1,19 +1,11 @@
-# frontend
+# Запуск клиента аггрегатора поисковых запросов
 
-## Project setup
+## Установка всех пакетов приложения
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Запуск приложения в режиме разработки с возможностью "горячей перезагрузки"
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
