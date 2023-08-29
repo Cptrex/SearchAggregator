@@ -102,7 +102,7 @@ ____________
 | BING_API_KEY                 | Ключ API для поиского запроса Bing                                      |
 | BING_SEARCH_V7_ENDPOINT      | URL для отправки запроса API                                            |
 
-### Настройки база данных расположены в **appsettings.json**
+### Настройки базы данных расположены в **appsettings.json**
 
 ```
 {
