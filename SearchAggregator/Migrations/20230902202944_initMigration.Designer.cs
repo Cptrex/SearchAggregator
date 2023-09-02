@@ -11,7 +11,7 @@ using SearchAggregator.Models;
 namespace SearchAggregator.Migrations
 {
     [DbContext(typeof(SearchContext))]
-    [Migration("20230901231005_initMigration")]
+    [Migration("20230902202944_initMigration")]
     partial class initMigration
     {
         /// <inheritdoc />

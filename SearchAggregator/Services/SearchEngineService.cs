@@ -13,7 +13,6 @@ public class SearchEngineService : ISearchEngineService
     public async Task<List<SearchItemBaseModel>> SearchViaGoogle(IHttpClientFactory httpFactory, string searchText)
     {
         Console.WriteLine("[GOOGLE SEARCH] Init...");
-        await Task.Delay(2000);
         if (IsSearchTextSizeCorrect(searchText) == false) return new List<SearchItemBaseModel>();
 
         var httpClient = httpFactory.CreateClient();

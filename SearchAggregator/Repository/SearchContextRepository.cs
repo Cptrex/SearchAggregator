@@ -21,7 +21,6 @@ public class SearchContextRepository : ISearchContextRepository
 
     public async Task AddSearchAggregatorResult(SearchAggregatorResult aggregatorResult)
     {
-        Console.WriteLine(aggregatorResult.SearchResult.Count);
         _context.SearchAggregatorResults.Add(aggregatorResult);
         await _context.SaveChangesAsync();
     }

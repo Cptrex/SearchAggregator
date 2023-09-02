@@ -15,6 +15,10 @@ public class SearchContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        var settings = new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Objects
+        };
         var aggregatorEntity = modelBuilder.Entity<SearchAggregatorResult>();
         aggregatorEntity.ToTable(nameof(SearchAggregatorResult));
         aggregatorEntity.HasIndex(e => e.SearchText);
@@ -24,8 +28,8 @@ public class SearchContext : DbContext
         aggregatorEntity.Property(e => e.SearchResult)
             .IsRequired(false)
             .HasConversion(
-                v => JsonConvert.SerializeObject(v),
-                v => JsonConvert.DeserializeObject<List<SearchItemBaseModel>>(v)
+                v => JsonConvert.SerializeObject(v, settings),
+                v => JsonConvert.DeserializeObject<List<SearchItemBaseModel>>(v, settings)
             )
             .HasDefaultValue(new List<SearchItemBaseModel>())
             .HasColumnType("nvarchar(MAX)");

@@ -2,7 +2,6 @@
 using SearchAggregator.Interfaces;
 using SearchAggregator.Models;
 using SearchAggregator.SearchJsonModels;
-using System.Threading;
 
 namespace SearchAggregator.Controllers;
 
