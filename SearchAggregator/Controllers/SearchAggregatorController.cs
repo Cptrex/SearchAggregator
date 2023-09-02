@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using SearchAggregator.DTOs;
+﻿using Microsoft.AspNetCore.Mvc;
 using SearchAggregator.Interfaces;
 using SearchAggregator.Models;
+using SearchAggregator.SearchJsonModels;
+using System.Threading;
 
 namespace SearchAggregator.Controllers;
 
@@ -13,15 +13,12 @@ public class SearchAggregatorController : ControllerBase
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ISearchContextRepository _searchContextRepository;
     private readonly ISearchEngineService _searchEngineService;
-    private readonly IMapper _mapper;
 
-
-    public SearchAggregatorController(IMapper mapper, ISearchEngineService searchEngineService, IHttpClientFactory httpClientFactory, ISearchContextRepository repository)
+    public SearchAggregatorController(ISearchEngineService searchEngineService, IHttpClientFactory httpClientFactory, ISearchContextRepository repository)
     {
         _httpClientFactory = httpClientFactory;
         _searchContextRepository = repository;
         _searchEngineService = searchEngineService;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -30,26 +27,33 @@ public class SearchAggregatorController : ControllerBase
     {
         var foundSearchResults = await _searchContextRepository.GetAggregatorResultBySearchText(searchText, cancellationToken);
 
-        if (foundSearchResults == null) 
+        if (foundSearchResults != null) return Ok(foundSearchResults.SearchResult);
+
+        var taskGoogle = _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText);
+        var taskBing = _searchEngineService.SearchViaBing(_httpClientFactory, searchText);
+        var taskYandex = _searchEngineService.SearchViaYandex(_httpClientFactory, searchText);
+        var searchTasks = new List<Task<List<SearchItemBaseModel>>> { taskGoogle, taskBing, taskYandex };
+        var loopTimeout = TimeSpan.FromSeconds(30);
+        var startLoopTime = DateTime.Now;
+
+        while (searchTasks.Count > 0 && DateTime.Now - startLoopTime < loopTimeout)
         {
-            var googleItems = await _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText);
-            var bingItems = await _searchEngineService.SearchViaBing(_httpClientFactory, searchText);
-            var yandexItems = await _searchEngineService.SearchViaYandex(_httpClientFactory, searchText);
+            var completedTask = await Task.WhenAny(searchTasks);
 
-            var aggregatorResult = new SearchAggregatorResult(searchText, googleItems, yandexItems, bingItems);
+            if (completedTask.Result.Count == 0)
+            {
+                searchTasks.Remove(completedTask);
+            }
+            else
+            {
+                var aggregatorResult = new SearchAggregatorResult(searchText, completedTask.Result);
 
-            await _searchContextRepository.AddSearchAggregatorResult(aggregatorResult);
+                await _searchContextRepository.AddSearchAggregatorResult(aggregatorResult);
 
-            foundSearchResults = aggregatorResult;
+                return Ok(aggregatorResult.SearchResult);
+            }
         }
 
-        var webSearchDto = new WebSearchDto
-        {
-            GoogleResults = _mapper.Map<List<GoogleDto>>(foundSearchResults.GoogleResult),
-            BingResults = _mapper.Map<List<BingDto>>(foundSearchResults.BingResult),
-            YandexResults = _mapper.Map<List<YandexDto>>(foundSearchResults.YandexResult),
-        };
-
-        return Ok(webSearchDto);
+        return Ok(new List<SearchItemBaseModel>());
     }
 }

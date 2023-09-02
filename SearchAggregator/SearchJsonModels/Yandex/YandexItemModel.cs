@@ -1,6 +1,6 @@
 ﻿namespace SearchAggregator.SearchJsonModels.Yandex;
 
-public class YandexItemModel
+public class YandexItemModel : SearchItemBaseModel
 {
     public string Title { get; set; }
     public string Url { get; set; }

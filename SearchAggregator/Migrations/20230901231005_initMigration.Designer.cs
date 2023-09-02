@@ -11,8 +11,8 @@ using SearchAggregator.Models;
 namespace SearchAggregator.Migrations
 {
     [DbContext(typeof(SearchContext))]
-    [Migration("20230828132646_ChangedColumnDefaultValues")]
-    partial class ChangedColumnDefaultValues
+    [Migration("20230901231005_initMigration")]
+    partial class initMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,12 +32,7 @@ namespace SearchAggregator.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BingResult")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(MAX)")
-                        .HasDefaultValue("[]");
-
-                    b.Property<string>("GoogleResult")
+                    b.Property<string>("SearchResult")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(MAX)")
                         .HasDefaultValue("[]");
@@ -45,11 +40,6 @@ namespace SearchAggregator.Migrations
                     b.Property<string>("SearchText")
                         .IsRequired()
                         .HasColumnType("nvarchar(2048)");
-
-                    b.Property<string>("YandexResult")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(MAX)")
-                        .HasDefaultValue("[]");
 
                     b.HasKey("Id");
 

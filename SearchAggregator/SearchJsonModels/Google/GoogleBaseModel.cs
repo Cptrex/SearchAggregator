@@ -1,6 +1,6 @@
 ﻿namespace SearchAggregator.SearchJsonModels.Google;
 
-public class GoogleResponseModel
+public class GoogleBaseModel
 {
     public List<GoogleItemModel> Items { get; set; }
 }

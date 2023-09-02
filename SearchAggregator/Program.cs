@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SearchAggregator.Interfaces;
 using SearchAggregator.Models;
 using SearchAggregator.Repository;
@@ -10,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers().AddNewtonsoftJson(j => 
+{
+    j.SerializerSettings.TypeNameHandling = TypeNameHandling.Objects;
+});
 builder.Services.AddSpaStaticFiles(configuration =>
 {
     configuration.RootPath = "Frontend/dist";
@@ -21,7 +25,6 @@ builder.Services.AddDbContext<SearchContext>(options => options.UseSqlServer(dbC
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ISearchContextRepository, SearchContextRepository>();
 builder.Services.AddScoped<ISearchEngineService, SearchEngineService>();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 

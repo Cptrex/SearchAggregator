@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SearchAggregator.Extensions;
+using SearchAggregator.SearchJsonModels.Bing;
+using SearchAggregator.SearchJsonModels.Google;
 using SearchAggregator.Services;
 
 namespace SearchAggregator.Tests;
@@ -49,13 +51,14 @@ public class GoogleSearchTests
 
         // Act
         var result = await searchService.SearchViaGoogle(new MockHttpClientFactory(httpClient), "test search");
+        var firstResult = result[0] as GoogleItemModel;
 
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Result 1", result[0].Title);
-        Assert.Equal("https://example.com/1", result[0].Link);
-        Assert.Equal("Snippet 1", result[0].Snippet);
+        Assert.Equal("Result 1", firstResult.Title);
+        Assert.Equal("https://example.com/1", firstResult.Link);
+        Assert.Equal("Snippet 1", firstResult.Snippet);
 
         handlerMock.Protected().Verify(
             "SendAsync",

@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SearchAggregator.SearchJsonModels.Bing;
-using SearchAggregator.SearchJsonModels.Google;
-using SearchAggregator.SearchJsonModels.Yandex;
+using SearchAggregator.SearchJsonModels;
 
 namespace SearchAggregator.Models;
 
@@ -23,29 +21,13 @@ public class SearchContext : DbContext
         aggregatorEntity.Property(e => e.SearchText)
            .IsRequired(true)
            .HasColumnType("nvarchar(2048)");
-        aggregatorEntity.Property(e => e.BingResult)
+        aggregatorEntity.Property(e => e.SearchResult)
             .IsRequired(false)
             .HasConversion(
                 v => JsonConvert.SerializeObject(v),
-                v => JsonConvert.DeserializeObject<List<BingItemModel>>(v)
+                v => JsonConvert.DeserializeObject<List<SearchItemBaseModel>>(v)
             )
-            .HasDefaultValue(new List<BingItemModel>())
-            .HasColumnType("nvarchar(MAX)");
-        aggregatorEntity.Property(e => e.GoogleResult)
-            .IsRequired(false)
-            .HasConversion(
-                v => JsonConvert.SerializeObject(v),
-                v => JsonConvert.DeserializeObject<List<GoogleItemModel>>(v)
-            )
-            .HasDefaultValue(new List<GoogleItemModel>())
-            .HasColumnType("nvarchar(MAX)");
-        aggregatorEntity.Property(e => e.YandexResult)
-            .IsRequired(false)
-            .HasConversion(
-                v => JsonConvert.SerializeObject(v),
-                v => JsonConvert.DeserializeObject<List<YandexItemModel>>(v)
-            )
-            .HasDefaultValue(new List<YandexItemModel>())
+            .HasDefaultValue(new List<SearchItemBaseModel>())
             .HasColumnType("nvarchar(MAX)");
     }     
 

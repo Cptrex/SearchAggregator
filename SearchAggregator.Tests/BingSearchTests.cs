@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SearchAggregator.Extensions;
+using SearchAggregator.SearchJsonModels.Bing;
 using SearchAggregator.Services;
 
 namespace SearchAggregator.Tests;
@@ -51,13 +52,14 @@ public class BingSearchTests
 
         // Act
         var result = await searchService.SearchViaBing(new MockHttpClientFactory(httpClient), "test search");
+        var firstResult = result[0] as BingItemModel;
 
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Result 1", result[0].Name);
-        Assert.Equal("https://example.com/1", result[0].Url);
-        Assert.Equal("Snippet 1", result[0].Snippet);
+        Assert.Equal("Result 1", firstResult.Name);
+        Assert.Equal("https://example.com/1", firstResult.Url);
+        Assert.Equal("Snippet 1", firstResult.Snippet);
 
         handlerMock.Protected().Verify(
             "SendAsync",

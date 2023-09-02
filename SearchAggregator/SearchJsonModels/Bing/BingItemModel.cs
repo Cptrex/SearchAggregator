@@ -1,6 +1,6 @@
 ﻿namespace SearchAggregator.SearchJsonModels.Bing;
 
-public class BingItemModel
+public class BingItemModel : SearchItemBaseModel
 {
     public string Name { get; set; }
     public string Url { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using SearchAggregator.Interfaces;
+using SearchAggregator.SearchJsonModels;
 using SearchAggregator.SearchJsonModels.Bing;
 using SearchAggregator.SearchJsonModels.Google;
 using SearchAggregator.SearchJsonModels.Yandex;
@@ -9,9 +10,11 @@ namespace SearchAggregator.Services;
 
 public class SearchEngineService : ISearchEngineService
 {
-    public async Task<List<GoogleItemModel>> SearchViaGoogle(IHttpClientFactory httpFactory, string searchText)
+    public async Task<List<SearchItemBaseModel>> SearchViaGoogle(IHttpClientFactory httpFactory, string searchText)
     {
-        if (IsSearchTextSizeCorrect(searchText) == false) return new List<GoogleItemModel>();
+        Console.WriteLine("[GOOGLE SEARCH] Init...");
+        await Task.Delay(2000);
+        if (IsSearchTextSizeCorrect(searchText) == false) return new List<SearchItemBaseModel>();
 
         var httpClient = httpFactory.CreateClient();
 
@@ -24,18 +27,22 @@ public class SearchEngineService : ISearchEngineService
         if (response.IsSuccessStatusCode)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
-            var googleResults = JsonConvert.DeserializeObject<GoogleResponseModel>(responseContent);
+            var googleResults = JsonConvert.DeserializeObject<GoogleBaseModel>(responseContent);
             if (googleResults != null)
             {
-                return googleResults.Items;
+                return googleResults.Items.ConvertAll(i=> (SearchItemBaseModel)i);
             }
         }
 
-        return new List<GoogleItemModel>();
+        Console.WriteLine("[GOOGLE SEARCH] Completed!");
+
+        return new List<SearchItemBaseModel>();
     }
-    public async Task<List<BingItemModel>> SearchViaBing(IHttpClientFactory httpFactory, string searchText)
+    public async Task<List<SearchItemBaseModel>> SearchViaBing(IHttpClientFactory httpFactory, string searchText)
     {
-        if (IsSearchTextSizeCorrect(searchText) == false) return new List<BingItemModel>();
+        Console.WriteLine("[BING SEARCH] Init...");
+
+        if (IsSearchTextSizeCorrect(searchText) == false) return new List<SearchItemBaseModel>();
 
         string bingAPIKey = Environment.GetEnvironmentVariable("BING_API_KEY");
         string bingAPIUrl = Environment.GetEnvironmentVariable("BING_SEARCH_V7_ENDPOINT");
@@ -44,20 +51,26 @@ public class SearchEngineService : ISearchEngineService
 
         httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", bingAPIKey);
 
+        // count = 11 потому что веб поиск возвращает -1 значение от count
         HttpResponseMessage response = await httpClient.GetAsync($"{bingAPIUrl}?q={Uri.EscapeDataString(searchText)}&=count=11");
 
         if (response.IsSuccessStatusCode)
         {
             string bingData = await response.Content.ReadAsStringAsync();
             var bingResults = JsonConvert.DeserializeObject<BingBaseModel>(bingData);
-            return bingResults.WebPages.Value;
+
+            return bingResults.WebPages.Value.ConvertAll(i => (SearchItemBaseModel)i);
         }
 
-        return new List<BingItemModel>();
+        Console.WriteLine("[BING SEARCH] Completed!");
+
+        return new List<SearchItemBaseModel>();
     }
-    public async Task<List<YandexItemModel>> SearchViaYandex(IHttpClientFactory httpFactory, string searchText)
+    public async Task<List<SearchItemBaseModel>> SearchViaYandex(IHttpClientFactory httpFactory, string searchText)
     {
-        if (IsSearchTextSizeCorrect(searchText) == false) return new List<YandexItemModel>();
+        Console.WriteLine("[YANDEX SEARCH] Init...");
+
+        if (IsSearchTextSizeCorrect(searchText) == false) return new List<SearchItemBaseModel>();
 
         string yandexAPIUser = Environment.GetEnvironmentVariable("YANDEX_API_USER");
         string yandexAPIKey = Environment.GetEnvironmentVariable("YANDEX_API_KEY");
@@ -71,18 +84,17 @@ public class SearchEngineService : ISearchEngineService
             $"&filter=strict" +
             $"&groupby=attr%3D%22%22.mode%3Dflat.groups-on-page%3D10.docs-in-group%3D1");
         
-        var yandexSearchResultList = new List<YandexItemModel>();
+        var yandexSearchResultList = new List<SearchItemBaseModel>();
 
         if (response.IsSuccessStatusCode)
         {
             string yandexData = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(yandexData);
+            //Console.WriteLine(yandexData);
             XmlDocument xmlDoc = new();
             xmlDoc.LoadXml(yandexData);
             XmlElement root = xmlDoc.DocumentElement;
             XmlNodeList docNodes = root.SelectNodes("/yandexsearch/response/results/grouping/group/doc");
 
-            Console.WriteLine(docNodes.Count);
             foreach (XmlNode docNode in docNodes)
             {
                 var yandexItemModel = new YandexItemModel()
@@ -96,10 +108,13 @@ public class SearchEngineService : ISearchEngineService
             }
         }
 
-        Console.WriteLine(JsonConvert.SerializeObject(yandexSearchResultList));
+        List<SearchItemBaseModel> searchResults = yandexSearchResultList;
 
-        return yandexSearchResultList;
+        Console.WriteLine("[YANDEX SEARCH] Completed!");
+
+        return searchResults;
     }
+
     public bool IsSearchTextSizeCorrect(string searchText)
     {
         const int maxSearchTextSize = 2048;

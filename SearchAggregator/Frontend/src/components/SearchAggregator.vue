@@ -5,16 +5,16 @@
         <input class="search__input" v-model="searchInput"/>
         <button type="submit" class="search__button" @click="searchWebResults()">Поиск</button>
       </form>
-      <div class="search__wrapper">
+      <!--<div class="search__wrapper">
         <h2>Google</h2>
         <h2>Yandex</h2>
         <h2>Bing</h2>
-      </div>
+      </div>-->
       <p class="search__preloader" v-if="isDataLoading">Загружаем данные...</p>
       <section class="search__section section" v-else>
-      <article class="section__article" v-for="searchData in searchResult">
+      <article class="section__article">
         <ul class="section__list">
-          <li class="section__item item" v-for="searchEntity in searchData">
+          <li class="section__item item" v-for="searchEntity in searchData.searchResults">
             <div class="item__wrapper">
               <h3 class="item__title">{{ searchEntity.title }}</h3>
               <a class="item__link" :href="searchEntity.url" target="_blank">{{ searchEntity.url }}</a>
@@ -35,10 +35,8 @@ export default {
     return {
       searchInput: "",
       isDataLoading: false,
-      searchResult: {
-        googleResult: [],
-        bingResult: [],
-        yandexResult: []
+      searchData: {
+        searchResults: [],
       }
     }
   },
@@ -46,7 +44,7 @@ export default {
     searchWebResults() {
       this.isDataLoading = true;
       axios.get(`http://localhost:5133/api/v1/aggregator/search?searchText=${this.searchInput}`).then(response => {
-          this.searchResult = response.data;
+          this.searchData.searchResults = response.data;
           this.isDataLoading = false;
       }).catch(error => {
         console.log(error);
