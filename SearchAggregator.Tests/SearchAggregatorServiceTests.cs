@@ -6,13 +6,6 @@ namespace SearchAggregator.Tests
 {
     public class SearchAggregatorServiceTests
     {
-        /// <summary>
-        /// К сожалению, этот тест не пройдет. Всё дело в методе GetAggregatorResultBySearchText, который вызывает мой собственный метод в Linq выражении, который
-        /// в свою очередь вызывает написанную SQL- функцию для выполнения встроенного механизма SOUNDEX в базе данных.
-        /// На момент написания данного веб приложения у меня нет знаний как "замокать" в in-memory базу данных ещё и sql код по созданию моей функции.
-        /// Данный тест оставляю тут только лишь для демонстрации, что я - умею.
-        /// </summary>
-        /// <returns></returns>
         [Fact]
         public async Task GetAggregatorResultBySearchText_ExistingResult_ReturnsResult()
         {

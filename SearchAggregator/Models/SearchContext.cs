@@ -34,10 +34,4 @@ public class SearchContext : DbContext
             .HasDefaultValue(new List<SearchItemBaseModel>())
             .HasColumnType("nvarchar(MAX)");
     }     
-
-    [DbFunction("MySoundEx", "")]
-    public static string SoundLike(string searchText)
-    {
-        throw new NotSupportedException();
-    }
 }

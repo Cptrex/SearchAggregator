@@ -15,8 +15,9 @@ public class SearchContextRepository : ISearchContextRepository
 
     public async Task<SearchAggregatorResult> GetAggregatorResultBySearchText(string searchText, CancellationToken cancellationToken)
     {
-        return await _context.SearchAggregatorResults.Where(agg =>
-                                SearchContext.SoundLike(agg.SearchText) == SearchContext.SoundLike(searchText)).FirstOrDefaultAsync(cancellationToken);
+        return await _context.SearchAggregatorResults.Where(agg => 
+                agg.SearchText.ToLower().Replace(" ", "") == searchText.ToLower().Replace(" ", ""))
+                .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task AddSearchAggregatorResult(SearchAggregatorResult aggregatorResult)
