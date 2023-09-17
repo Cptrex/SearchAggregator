@@ -11,8 +11,8 @@ using SearchAggregator.Models;
 namespace SearchAggregator.Migrations
 {
     [DbContext(typeof(SearchContext))]
-    [Migration("20230901231005_initMigration")]
-    partial class initMigration
+    [Migration("20230903104633_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

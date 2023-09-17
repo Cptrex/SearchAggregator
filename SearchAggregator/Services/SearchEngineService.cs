@@ -13,7 +13,6 @@ public class SearchEngineService : ISearchEngineService
     public async Task<List<SearchItemBaseModel>> SearchViaGoogle(IHttpClientFactory httpFactory, string searchText)
     {
         Console.WriteLine("[GOOGLE SEARCH] Init...");
-        await Task.Delay(2000);
         if (IsSearchTextSizeCorrect(searchText) == false) return new List<SearchItemBaseModel>();
 
         var httpClient = httpFactory.CreateClient();
@@ -30,11 +29,11 @@ public class SearchEngineService : ISearchEngineService
             var googleResults = JsonConvert.DeserializeObject<GoogleBaseModel>(responseContent);
             if (googleResults != null)
             {
+                Console.WriteLine("[GOOGLE SEARCH] Completed!");
+
                 return googleResults.Items.ConvertAll(i=> (SearchItemBaseModel)i);
             }
         }
-
-        Console.WriteLine("[GOOGLE SEARCH] Completed!");
 
         return new List<SearchItemBaseModel>();
     }
@@ -59,10 +58,11 @@ public class SearchEngineService : ISearchEngineService
             string bingData = await response.Content.ReadAsStringAsync();
             var bingResults = JsonConvert.DeserializeObject<BingBaseModel>(bingData);
 
+            Console.WriteLine("[BING SEARCH] Completed!");
+
             return bingResults.WebPages.Value.ConvertAll(i => (SearchItemBaseModel)i);
         }
 
-        Console.WriteLine("[BING SEARCH] Completed!");
 
         return new List<SearchItemBaseModel>();
     }
@@ -89,7 +89,6 @@ public class SearchEngineService : ISearchEngineService
         if (response.IsSuccessStatusCode)
         {
             string yandexData = await response.Content.ReadAsStringAsync();
-            //Console.WriteLine(yandexData);
             XmlDocument xmlDoc = new();
             xmlDoc.LoadXml(yandexData);
             XmlElement root = xmlDoc.DocumentElement;
@@ -109,8 +108,8 @@ public class SearchEngineService : ISearchEngineService
         }
 
         List<SearchItemBaseModel> searchResults = yandexSearchResultList;
-
-        Console.WriteLine("[YANDEX SEARCH] Completed!");
+        
+        Console.WriteLine($"[YANDEX SEARCH] Completed!");
 
         return searchResults;
     }

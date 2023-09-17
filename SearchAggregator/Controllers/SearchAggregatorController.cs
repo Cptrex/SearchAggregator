@@ -2,7 +2,6 @@
 using SearchAggregator.Interfaces;
 using SearchAggregator.Models;
 using SearchAggregator.SearchJsonModels;
-using System.Threading;
 
 namespace SearchAggregator.Controllers;
 
@@ -29,10 +28,10 @@ public class SearchAggregatorController : ControllerBase
 
         if (foundSearchResults != null) return Ok(foundSearchResults.SearchResult);
 
-        var taskGoogle = _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText);
         var taskBing = _searchEngineService.SearchViaBing(_httpClientFactory, searchText);
+        var taskGoogle = _searchEngineService.SearchViaGoogle(_httpClientFactory, searchText);
         var taskYandex = _searchEngineService.SearchViaYandex(_httpClientFactory, searchText);
-        var searchTasks = new List<Task<List<SearchItemBaseModel>>> { taskGoogle, taskBing, taskYandex };
+        var searchTasks = new List<Task<List<SearchItemBaseModel>>> { taskBing, taskGoogle, taskYandex };
         var loopTimeout = TimeSpan.FromSeconds(30);
         var startLoopTime = DateTime.Now;
 

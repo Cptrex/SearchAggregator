@@ -16,9 +16,9 @@
         <ul class="section__list">
           <li class="section__item item" v-for="searchEntity in searchData.searchResults">
             <div class="item__wrapper">
-              <h3 class="item__title">{{ searchEntity.title }}</h3>
-              <a class="item__link" :href="searchEntity.url" target="_blank">{{ searchEntity.url }}</a>
-              <p class="item__description">{{ searchEntity.description }}</p>
+                <h3 class="item__title">{{ Object.values(searchEntity)[1] }}</h3>
+                <a class="item__link" :href="searchEntity.url" target="_blank">{{Object.values(searchEntity)[2] }}</a>
+                <p class="item__description">{{ Object.values(searchEntity)[3] }}</p>
             </div>
           </li>
         </ul>
