@@ -17,13 +17,13 @@
       "applicationUrl": "http://localhost:5133",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "GOOGLE_API_KEY": "AIzaSyCSXH-f4T_d9RV98Nz8vkXF2vlT3jO2gik",
+        "GOOGLE_API_KEY": "",
         "GOOGLE_API_SEARCH_URL": "https://www.googleapis.com/customsearch/v1",
-        "GOOGLE_API_SEARCH_ENGINE_ID": "e6c1b0c6f5d5142fd",
-        "YANDEX_API_USER": "cpt-rex",
-        "YANDEX_API_KEY": "03.1566488076:4acf537ed3969f9b42d12e731b3e3162",
+        "GOOGLE_API_SEARCH_ENGINE_ID": "",
+        "YANDEX_API_USER": "",
+        "YANDEX_API_KEY": "",
         "YANDEX_API_SEARCH_URL": "https://yandex.com/search/xml",
-        "BING_API_KEY": "9ef55ba708c7490faf415b7584d8765e",
+        "BING_API_KEY": "",
         "BING_SEARCH_V7_ENDPOINT": "https://api.bing.microsoft.com/v7.0/search"
       }
     },
